@@ -138,7 +138,7 @@ interface Candle {
  * ========================================================================*/
 
 const EQUITY_BASE = 1_000_000;
-const REALIZED_OPEN = 0; // Geçmiş kar/zarar sıfırlandı
+const REALIZED_OPEN = 0;
 const MAINT_MARGIN = 0.3;
 const BASE_TS = Date.UTC(2026, 7, 13, 6, 30, 0);
 
@@ -193,7 +193,6 @@ const INITIAL_QUOTES: Record<string, Quote> = Object.fromEntries(
 const SCANNER_SYMBOLS = SEED.filter((s) => !s.tape).map((s) => s.symbol);
 const TAPE_SYMBOLS = SEED.filter((s) => s.tape).map((s) => s.symbol);
 
-// İşleme hazır bomboş portföy ve geçmiş
 const INITIAL_POSITIONS: Position[] = [];
 const INITIAL_EXECUTIONS: Execution[] = [];
 
@@ -286,9 +285,8 @@ function buildSeries(symbol: string, tf: Timeframe, count = 88): Candle[] {
  * 6. SHARED UI ATOMS & MODERN PANEL STYLES
  * ========================================================================*/
 
-// Modernleştirilmiş Panel Sınıfı (Login ekranına uyumlu Glassmorphism efekti)
 const PANEL =
-  'flex min-h-0 flex-col overflow-hidden rounded-xl border border-white/[0.06] bg-[#0d1117]/60 backdrop-blur-md shadow-2xl transition-all duration-300';
+  'flex min-h-0 flex-col overflow-hidden rounded-xl border border-white/[0.08] bg-[#0d1117]/70 backdrop-blur-xl shadow-2xl transition-all duration-300';
 
 function PanelHeader({
   title,
@@ -300,7 +298,7 @@ function PanelHeader({
   right?: React.ReactNode;
 }) {
   return (
-    <header className="flex h-9 shrink-0 items-center justify-between gap-2 border-b border-white/[0.06] bg-gradient-to-b from-white/[0.03] to-transparent px-3">
+    <header className="flex h-10 shrink-0 items-center justify-between gap-2 border-b border-white/[0.08] bg-gradient-to-b from-white/[0.04] to-transparent px-3">
       <div className="flex min-w-0 items-center gap-2">
         <span className="h-2 w-2 shrink-0 rounded-full bg-emerald-400 shadow-[0_0_8px_1px_rgba(16,185,129,0.8)]" />
         <h2 className="truncate text-[11px] font-bold uppercase tracking-[0.14em] text-slate-200">
@@ -363,7 +361,7 @@ function Segmented<T extends string>({
   size?: 'sm' | 'md';
 }) {
   return (
-    <div className="flex items-center gap-0.5 rounded-[6px] border border-white/[0.07] bg-black/60 p-0.5 shadow-inner">
+    <div className="flex items-center gap-0.5 rounded-[6px] border border-white/[0.08] bg-black/60 p-0.5 shadow-inner">
       {options.map((opt) => (
         <button
           key={opt}
@@ -374,7 +372,7 @@ function Segmented<T extends string>({
             size === 'sm' ? 'px-2 py-[3px] text-[10px]' : 'px-3 py-1 text-[11px]',
             value === opt
               ? 'bg-emerald-500/15 text-emerald-300 shadow-[inset_0_0_0_1px_rgba(16,185,129,0.45)]'
-              : 'text-slate-500 hover:bg-white/[0.04] hover:text-slate-300',
+              : 'text-slate-500 hover:bg-white/[0.05] hover:text-slate-200',
           )}
         >
           {opt}
@@ -396,13 +394,13 @@ function Metric({
   tone?: 'neutral' | 'up' | 'down' | 'accent';
 }) {
   return (
-    <div className="flex flex-col justify-center border-l border-white/[0.06] px-4 first:border-l-0">
+    <div className="flex flex-col justify-center border-l border-white/[0.06] px-3 sm:px-4 first:border-l-0">
       <span className="text-[9px] font-bold uppercase tracking-[0.16em] text-slate-500">
         {label}
       </span>
       <span
         className={cx(
-          'font-mono text-[14px] font-bold leading-tight tabular-nums tracking-tight',
+          'font-mono text-[13px] sm:text-[14px] font-bold leading-tight tabular-nums tracking-tight',
           tone === 'up' && 'text-emerald-400',
           tone === 'down' && 'text-rose-400',
           tone === 'accent' && 'text-emerald-300',
@@ -412,7 +410,7 @@ function Metric({
         {value}
       </span>
       {sub && (
-        <span className="font-mono text-[9px] leading-tight text-slate-500">
+        <span className="font-mono text-[9px] leading-tight text-slate-500 hidden sm:block">
           {sub}
         </span>
       )}
@@ -442,7 +440,7 @@ function TopBar({
   clock: string;
 }) {
   return (
-    <header className="flex h-16 shrink-0 items-center gap-3 border-b border-white/[0.07] bg-[#040609]/90 backdrop-blur-md px-4 z-50">
+    <header className="flex h-16 shrink-0 items-center gap-2 sm:gap-3 border-b border-white/[0.07] bg-[#040609]/90 backdrop-blur-md px-3 sm:px-4 z-50">
       <div className="flex items-center gap-2.5 pr-2">
         <div className="grid h-9 w-9 place-items-center rounded-lg bg-gradient-to-br from-emerald-400 to-emerald-600 shadow-[0_0_16px_-2px_rgba(16,185,129,0.8)]">
           <span className="font-mono text-[14px] font-black text-[#04140d]">
@@ -501,7 +499,7 @@ function TopBar({
         </div>
       </div>
 
-      <div className="flex shrink-0 items-center gap-3 border-l border-white/[0.06] pl-4">
+      <div className="flex shrink-0 items-center gap-3 border-l border-white/[0.06] pl-3 sm:pl-4">
         <button
           type="button"
           onClick={onToggleFeed}
@@ -521,7 +519,7 @@ function TopBar({
                 : 'bg-amber-400',
             )}
           />
-          {feedOn ? 'Feed live' : 'Feed paused'}
+          <span className="hidden sm:block">{feedOn ? 'Feed live' : 'Feed paused'}</span>
         </button>
         <div className="hidden font-mono text-[12px] font-bold tabular-nums text-slate-300 sm:block">
           {clock}
@@ -568,7 +566,7 @@ function ScannerPanel({
         }
       />
 
-      <div className="shrink-0 space-y-2 border-b border-white/[0.06] px-3 py-2.5">
+      <div className="shrink-0 space-y-2 border-b border-white/[0.06] px-3 py-2.5 bg-black/20">
         <p className="text-[10px] font-medium leading-relaxed text-slate-500">
           <span className="text-slate-400 font-bold">Filters</span> · Common stock ·
           Chg&nbsp;&gt;&nbsp;20% · $1–$20 · Vol&nbsp;&gt;&nbsp;50K
@@ -580,7 +578,7 @@ function ScannerPanel({
         />
       </div>
 
-      <div className="grid shrink-0 grid-cols-[52px_1fr_1fr_58px] gap-1 border-b border-white/[0.06] bg-black/40 px-3 py-2 font-mono text-[9px] font-bold uppercase tracking-[0.12em] text-slate-400">
+      <div className="grid shrink-0 grid-cols-[52px_1fr_1fr_58px] gap-1 border-b border-white/[0.06] bg-black/50 px-3 py-2 font-mono text-[9px] font-bold uppercase tracking-[0.12em] text-slate-400">
         <span>Symbol</span>
         <span className="text-right">Price</span>
         <span className="text-right">Change</span>
@@ -597,10 +595,10 @@ function ScannerPanel({
               type="button"
               onClick={() => onSelect(q.symbol)}
               className={cx(
-                'grid w-full grid-cols-[52px_1fr_1fr_58px] items-center gap-1 border-l-[3px] px-2.5 py-1.5 text-left font-mono text-[11px] tabular-nums transition-colors',
+                'grid w-full grid-cols-[52px_1fr_1fr_58px] items-center gap-1 border-l-[3px] px-2.5 py-2 text-left font-mono text-[11px] tabular-nums transition-colors',
                 isActive
                   ? 'border-l-emerald-400 bg-emerald-500/15'
-                  : 'border-l-transparent hover:bg-white/[0.04]',
+                  : 'border-l-transparent hover:bg-white/[0.05]',
               )}
             >
               <span
@@ -871,7 +869,7 @@ function ChartPanel({
         }
       />
 
-      <div className="flex shrink-0 flex-wrap items-center gap-x-4 gap-y-1 border-b border-white/[0.06] bg-black/20 px-3 py-2 font-mono text-[10px] tabular-nums">
+      <div className="flex shrink-0 flex-wrap items-center gap-x-4 gap-y-1 border-b border-white/[0.06] bg-black/30 px-3 py-2 font-mono text-[10px] tabular-nums">
         <span className="text-[12px] font-extrabold text-slate-100">{symbol}</span>
         <span className="text-slate-500 font-medium">{timeframe} · NQNX</span>
         {(
@@ -882,7 +880,7 @@ function ChartPanel({
             ['C', readout.c],
           ] as const
         ).map(([k, v]) => (
-          <span key={k} className="text-slate-500 font-medium">
+          <span key={k} className="text-slate-500 font-medium hidden sm:inline-block">
             {k}
             <span
               className={cx(
@@ -894,12 +892,12 @@ function ChartPanel({
             </span>
           </span>
         ))}
-        <span className="text-slate-500 font-medium">
+        <span className="text-slate-500 font-medium hidden sm:inline-block">
           Vol<span className="ml-1.5 font-bold text-sky-400">{compact(readout.v)}</span>
         </span>
         <span
           className={cx(
-            'ml-auto font-extrabold text-[11px]',
+            'ml-auto font-extrabold text-[12px]',
             chg >= 0 ? 'text-emerald-400' : 'text-rose-400',
           )}
         >
@@ -1003,7 +1001,7 @@ function ChartPanel({
             );
           })}
 
-          {/* Position Line (Eğer varsa) */}
+          {/* Position Line */}
           {position && position.qty !== 0 && (
             <g>
               <line
@@ -1185,7 +1183,7 @@ function PortfolioPanel({
       <div className="min-h-0 flex-1 overflow-auto">
         {tab === 'Open Positions' && (
           <table className="w-full min-w-[640px] border-collapse font-mono text-[11px] tabular-nums">
-            <thead className="sticky top-0 z-10 bg-black/40 backdrop-blur-md">
+            <thead className="sticky top-0 z-10 bg-black/60 backdrop-blur-md">
               <tr className="border-b border-white/[0.06] text-[9px] font-bold uppercase tracking-[0.12em] text-slate-400">
                 {['Symbol', 'Side', 'Qty', 'Entry', 'Last', 'Exposure', 'Unrealized', 'Chg%', ''].map(
                   (h, i) => (
@@ -1312,7 +1310,7 @@ function PortfolioPanel({
 
         {tab === 'Working Orders' && (
           <table className="w-full min-w-[560px] border-collapse font-mono text-[11px] tabular-nums">
-            <thead className="sticky top-0 z-10 bg-black/40 backdrop-blur-md">
+            <thead className="sticky top-0 z-10 bg-black/60 backdrop-blur-md">
               <tr className="border-b border-white/[0.06] text-[9px] font-bold uppercase tracking-[0.12em] text-slate-400">
                 {['Placed', 'Symbol', 'Side', 'Qty', 'Limit', 'Last', 'TIF', ''].map(
                   (h, i) => (
@@ -1388,7 +1386,7 @@ function PortfolioPanel({
 
         {tab === 'Executions' && (
           <table className="w-full min-w-[520px] border-collapse font-mono text-[11px] tabular-nums">
-            <thead className="sticky top-0 z-10 bg-black/40 backdrop-blur-md">
+            <thead className="sticky top-0 z-10 bg-black/60 backdrop-blur-md">
               <tr className="border-b border-white/[0.06] text-[9px] font-bold uppercase tracking-[0.12em] text-slate-400">
                 {['Time', 'Symbol', 'Side', 'Qty', 'Price', 'Value', 'Route'].map(
                   (h, i) => (
@@ -1480,7 +1478,7 @@ function Field({
 }
 
 const INPUT =
-  'h-9 w-full rounded-lg border border-white/[0.08] bg-black/60 px-3 font-mono text-[13px] tabular-nums text-slate-100 outline-none transition-colors focus:border-emerald-500/60 focus:bg-black/80 shadow-inner';
+  'h-10 w-full rounded-lg border border-white/[0.08] bg-black/60 px-3 font-mono text-[14px] tabular-nums text-slate-100 outline-none transition-colors focus:border-emerald-500/60 focus:bg-black/80 shadow-inner';
 
 function OrderTicket({
   quote,
@@ -1591,7 +1589,7 @@ function OrderTicket({
                 onClick={() => setSide(s)}
                 aria-pressed={side === s}
                 className={cx(
-                  'h-10 rounded-lg border font-mono text-[13px] font-extrabold tracking-wide transition-all shadow-md',
+                  'h-11 rounded-lg border font-mono text-[13px] font-extrabold tracking-wide transition-all shadow-md',
                   side === s
                     ? s === 'SHORT'
                       ? 'border-rose-500/70 bg-rose-500/20 text-rose-200 shadow-[0_0_16px_-4px_rgba(244,63,94,0.6)]'
@@ -1610,7 +1608,7 @@ function OrderTicket({
             <button
               type="button"
               onClick={() => setQty((q) => Math.max(0, q - 100))}
-              className="grid h-9 w-10 shrink-0 place-items-center rounded-lg border border-white/[0.08] bg-black/50 text-slate-400 font-bold transition-colors hover:border-white/20 hover:text-slate-100 hover:bg-black/70"
+              className="grid h-10 w-12 shrink-0 place-items-center rounded-lg border border-white/[0.08] bg-black/50 text-slate-400 font-bold text-lg transition-colors hover:border-white/20 hover:text-slate-100 hover:bg-black/70"
             >
               −
             </button>
@@ -1620,12 +1618,12 @@ function OrderTicket({
               step={100}
               value={qty}
               onChange={(e) => setQty(Math.max(0, Number(e.target.value) || 0))}
-              className={cx(INPUT, 'text-center font-bold text-[14px]')}
+              className={cx(INPUT, 'text-center font-bold')}
             />
             <button
               type="button"
               onClick={() => setQty((q) => q + 100)}
-              className="grid h-9 w-10 shrink-0 place-items-center rounded-lg border border-white/[0.08] bg-black/50 text-slate-400 font-bold transition-colors hover:border-white/20 hover:text-slate-100 hover:bg-black/70"
+              className="grid h-10 w-12 shrink-0 place-items-center rounded-lg border border-white/[0.08] bg-black/50 text-slate-400 font-bold text-lg transition-colors hover:border-white/20 hover:text-slate-100 hover:bg-black/70"
             >
               +
             </button>
@@ -1639,7 +1637,7 @@ function OrderTicket({
               type="button"
               onClick={() => setQty(n)}
               className={cx(
-                'h-7 rounded-[5px] border font-mono text-[11px] font-bold transition-colors',
+                'h-8 rounded-[5px] border font-mono text-[11px] font-bold transition-colors',
                 qty === n
                   ? 'border-emerald-500/60 bg-emerald-500/15 text-emerald-300'
                   : 'border-white/[0.08] bg-black/40 text-slate-500 hover:text-slate-300 hover:bg-black/60',
@@ -1675,7 +1673,7 @@ function OrderTicket({
 
         <div className="grid grid-cols-2 gap-3">
           <Field label="Route">
-            <div className="flex h-9 items-center justify-between rounded-lg border border-white/[0.08] bg-black/70 px-3 font-mono text-[13px] font-bold text-slate-400 shadow-inner">
+            <div className="flex h-10 items-center justify-between rounded-lg border border-white/[0.08] bg-black/70 px-3 font-mono text-[13px] font-bold text-slate-400 shadow-inner">
               PAPER
               <svg viewBox="0 0 16 16" className="h-3.5 w-3.5 fill-none stroke-slate-500 stroke-[2]">
                 <rect x="3.5" y="7" width="9" height="6" rx="1.5" />
@@ -1691,7 +1689,7 @@ function OrderTicket({
                 min={0}
                 value={limit}
                 onChange={(e) => setLimit(Math.max(0, Number(e.target.value) || 0))}
-                className={cx(INPUT, 'font-bold text-[14px]')}
+                className={cx(INPUT, 'font-bold')}
               />
             ) : (
               <input
@@ -1765,7 +1763,7 @@ function OrderTicket({
 function TickerTape({ quotes }: { quotes: Record<string, Quote> }) {
   const items = TAPE_SYMBOLS.map((s) => quotes[s]);
   return (
-    <div className="relative h-9 shrink-0 overflow-hidden border-t border-white/[0.07] bg-[#040609]">
+    <div className="relative h-8 shrink-0 overflow-hidden border-t border-white/[0.07] bg-[#040609]">
       <div className="tape-track flex h-full w-max items-center gap-10 whitespace-nowrap px-4">
         {[0, 1].map((dup) =>
           items.map((q) => {
@@ -1774,7 +1772,7 @@ function TickerTape({ quotes }: { quotes: Record<string, Quote> }) {
             return (
               <span
                 key={`${dup}-${q.symbol}`}
-                className="flex items-baseline gap-2.5 font-mono text-[12px] tabular-nums"
+                className="flex items-baseline gap-2.5 font-mono text-[11px] tabular-nums"
               >
                 <span className="font-extrabold text-slate-200">{q.symbol}</span>
                 <span className="font-medium text-slate-100">{num(q.price)}</span>
@@ -1812,6 +1810,9 @@ export default function TradingTerminal() {
   const [firedId, setFiredId] = useState<string | null>(null);
   const [clock, setClock] = useState('--:--:--');
   const [toast, setToast] = useState<string | null>(null);
+
+  // MOBIL TAB STATE - BURASI KRITIK
+  const [mobileTab, setMobileTab] = useState<'trade' | 'scanner' | 'portfolio'>('trade');
 
   const quote = quotes[symbol];
   const position = positions.find((p) => p.symbol === symbol);
@@ -2093,9 +2094,9 @@ export default function TradingTerminal() {
           @media (prefers-reduced-motion: reduce) {
             .tape-track { animation: none; }
           }
-          ::-webkit-scrollbar { width: 8px; height: 8px; }
+          ::-webkit-scrollbar { width: 6px; height: 6px; }
           ::-webkit-scrollbar-track { background: transparent; }
-          ::-webkit-scrollbar-thumb { background: rgba(148,163,184,0.2); border-radius: 4px; border: 2px solid #040609; }
+          ::-webkit-scrollbar-thumb { background: rgba(148,163,184,0.15); border-radius: 4px; border: 1px solid #040609; }
           ::-webkit-scrollbar-thumb:hover { background: rgba(16,185,129,0.5); }
           input[type=number]::-webkit-outer-spin-button,
           input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
@@ -2113,69 +2114,64 @@ export default function TradingTerminal() {
         />
 
         {/* Paper trading banner */}
-        <div className="flex h-8 shrink-0 items-center justify-center gap-2 border-b border-amber-500/20 bg-amber-500/10 px-3 text-center text-[11px] font-bold tracking-wide text-amber-200/90 shadow-inner z-40">
-          <span className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse" />
-          SIMULATED MARKET DATA. ORDERS ROUTE TO PAPER VENUE (TZPF56EA) — NO LIVE EXECUTION.
+        <div className="flex h-8 shrink-0 items-center justify-center gap-2 border-b border-amber-500/20 bg-amber-500/10 px-3 text-center text-[10px] sm:text-[11px] font-bold tracking-wide text-amber-200/90 shadow-inner z-40">
+          <span className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse shrink-0" />
+          <span className="truncate">SIMULATED MARKET DATA. ORDERS ROUTE TO PAPER VENUE (TZPF56EA)</span>
         </div>
 
-        {/* Workspace */}
-        <main className="grid min-h-0 flex-1 gap-2 overflow-auto p-2 lg:grid-cols-12 lg:overflow-hidden relative">
+        {/* Workspace - MASAÜSTÜNDE GRID, MOBİLDE FLEX + TAB MANTIĞI */}
+        <main className="flex-1 min-h-0 overflow-y-auto lg:overflow-hidden p-2 relative z-10 flex flex-col lg:grid lg:grid-cols-12 lg:grid-rows-[1.35fr_1fr] gap-2">
           
           {/* Arkadaki dekoratif TradeZero parlamaları */}
           <div className="absolute top-[10%] left-[-5%] w-[400px] h-[400px] bg-emerald-500/5 rounded-full blur-[120px] pointer-events-none"></div>
           <div className="absolute bottom-[-10%] right-[10%] w-[500px] h-[500px] bg-blue-600/5 rounded-full blur-[120px] pointer-events-none"></div>
 
-          {/* Left rail */}
-          <div className="flex min-h-0 flex-col gap-2 lg:col-span-3 z-10">
-            <div className="h-[340px] min-h-0 lg:h-auto lg:flex-[1.15]">
-              <ScannerPanel
-                quotes={quotes}
-                active={symbol}
-                onSelect={setSymbol}
-              />
-            </div>
-            <div className="h-[330px] min-h-0 lg:h-auto lg:flex-1">
-              <HotkeyDeck
-                symbol={symbol}
-                armed={armed}
-                onArmedChange={setArmed}
-                onFire={fireHotkey}
-                firedId={firedId}
-                executions={executions}
-              />
-            </div>
+          {/* Scanner Panel */}
+          <div className={cx(
+            "min-h-[500px] lg:min-h-0 lg:col-span-3 lg:col-start-1 lg:row-start-1 flex flex-col z-10",
+            mobileTab !== 'scanner' && "hidden lg:flex"
+          )}>
+            <ScannerPanel
+              quotes={quotes}
+              active={symbol}
+              onSelect={setSymbol}
+            />
           </div>
 
-          {/* Center */}
-          <div className="flex min-h-0 flex-col gap-2 lg:col-span-6 z-10">
-            <div className="h-[380px] min-h-0 lg:h-auto lg:flex-[1.35]">
-              <ChartPanel
-                symbol={symbol}
-                quote={quote}
-                timeframe={timeframe}
-                onTimeframeChange={setTimeframe}
-                position={position}
-              />
-            </div>
-            <div className="h-[300px] min-h-0 lg:h-auto lg:flex-1">
-              <PortfolioPanel
-                positions={positions}
-                quotes={quotes}
-                orders={orders}
-                executions={executions}
-                activeSymbol={symbol}
-                onSelect={setSymbol}
-                onCancelOrder={(id) =>
-                  setOrders((prev) => prev.filter((o) => o.id !== id))
-                }
-                onFlatten={flattenSymbol}
-                totals={{ unrealized, exposure }}
-              />
-            </div>
+          {/* Chart Panel (Trade sekmesi) */}
+          <div className={cx(
+            "min-h-[400px] lg:min-h-0 lg:col-span-6 lg:col-start-4 lg:row-start-1 flex flex-col z-10",
+            mobileTab !== 'trade' && "hidden lg:flex"
+          )}>
+            <ChartPanel
+              symbol={symbol}
+              quote={quote}
+              timeframe={timeframe}
+              onTimeframeChange={setTimeframe}
+              position={position}
+            />
           </div>
 
-          {/* Right rail */}
-          <div className="min-h-[620px] lg:col-span-3 lg:min-h-0 z-10">
+          {/* Hotkey Deck (Mobilde Trade sekmesine dahil edildi) */}
+          <div className={cx(
+            "min-h-[250px] lg:min-h-0 lg:col-span-3 lg:col-start-1 lg:row-start-2 flex flex-col z-10",
+            mobileTab !== 'trade' && "hidden lg:flex"
+          )}>
+            <HotkeyDeck
+              symbol={symbol}
+              armed={armed}
+              onArmedChange={setArmed}
+              onFire={fireHotkey}
+              firedId={firedId}
+              executions={executions}
+            />
+          </div>
+
+          {/* Order Ticket (Trade sekmesi) */}
+          <div className={cx(
+            "min-h-[580px] lg:min-h-0 lg:col-span-3 lg:col-start-10 lg:row-start-1 lg:row-span-2 flex flex-col z-10",
+            mobileTab !== 'trade' && "hidden lg:flex"
+          )}>
             <OrderTicket
               quote={quote}
               position={position}
@@ -2183,16 +2179,60 @@ export default function TradingTerminal() {
               onSubmit={handleSubmitOrder}
             />
           </div>
+
+          {/* Portfolio Panel */}
+          <div className={cx(
+            "min-h-[500px] lg:min-h-0 lg:col-span-6 lg:col-start-4 lg:row-start-2 flex flex-col z-10",
+            mobileTab !== 'portfolio' && "hidden lg:flex"
+          )}>
+            <PortfolioPanel
+              positions={positions}
+              quotes={quotes}
+              orders={orders}
+              executions={executions}
+              activeSymbol={symbol}
+              onSelect={setSymbol}
+              onCancelOrder={(id) =>
+                setOrders((prev) => prev.filter((o) => o.id !== id))
+              }
+              onFlatten={flattenSymbol}
+              totals={{ unrealized, exposure }}
+            />
+          </div>
+
         </main>
 
         <TickerTape quotes={quotes} />
+
+        {/* MOBİL İÇİN ÖZEL ALT NAVİGASYON (TAB BAR) */}
+        <div className="lg:hidden shrink-0 flex items-center justify-between border-t border-white/[0.08] bg-[#040609]/95 backdrop-blur-xl px-2 py-2 z-50">
+          {[
+            { id: 'scanner', label: 'Scanner', icon: '🔍' },
+            { id: 'trade', label: 'Trade', icon: '⚡' },
+            { id: 'portfolio', label: 'Portfolio', icon: '💼' }
+          ].map(t => (
+            <button
+              key={t.id}
+              onClick={() => setMobileTab(t.id as any)}
+              className={cx(
+                "flex flex-1 flex-col items-center justify-center gap-1.5 py-1.5 rounded-xl transition-all",
+                mobileTab === t.id 
+                  ? "text-emerald-400 bg-emerald-500/10 shadow-[inset_0_0_0_1px_rgba(16,185,129,0.2)]" 
+                  : "text-slate-500 hover:text-slate-300 hover:bg-white/[0.02]"
+              )}
+            >
+              <span className="text-[18px]">{t.icon}</span>
+              <span className="text-[10px] font-bold uppercase tracking-wider">{t.label}</span>
+            </button>
+          ))}
+        </div>
 
         {/* Fill toast */}
         {toast && (
           <div
             role="status"
             aria-live="polite"
-            className="pointer-events-none fixed bottom-16 left-1/2 z-50 -translate-x-1/2 rounded-xl border border-emerald-500/40 bg-[#04140d]/95 px-6 py-3 font-mono text-[13px] font-bold text-emerald-300 shadow-[0_20px_40px_-10px_rgba(0,0,0,0.9)] backdrop-blur-md"
+            className="pointer-events-none fixed bottom-24 lg:bottom-16 left-1/2 z-50 -translate-x-1/2 rounded-xl border border-emerald-500/40 bg-[#04140d]/95 px-6 py-3 font-mono text-[13px] font-bold text-emerald-300 shadow-[0_20px_40px_-10px_rgba(0,0,0,0.9)] backdrop-blur-md whitespace-nowrap"
           >
             {toast}
           </div>
